@@ -1,12 +1,25 @@
 import React, { useRef, useState, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Mesh } from 'three'
+import { Mesh, Vector3 } from 'three'
 
-const Character: React.FC = () => {
+interface InteractivePoint {
+  id: string;
+  position: [number, number, number];
+  color: string;
+}
+
+interface CharacterProps {
+  interactivePoints: InteractivePoint[];
+  onProximityChange: (pointId: string | null) => void;
+  onInteract: () => void;
+}
+
+const Character: React.FC<CharacterProps> = ({ interactivePoints, onProximityChange, onInteract }) => {
   const meshRef = useRef<Mesh>(null);
   const [keysPressed, setKeysPressed] = useState<{
     [key: string]: boolean;
   }>({});
+  const prevActivePoint = useRef<string | null>(null);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -26,11 +39,32 @@ const Character: React.FC = () => {
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
 
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (event.key === 'e' || event.key === 'E') {
+        // Only trigger interaction if near an interactive point
+        const isInProximity = interactivePoints.some((point) => {
+          if (meshRef.current) {
+            const pointVec = new Vector3(point.position[0], point.position[1], point.position[2]);
+            const distance = meshRef.current.position.distanceTo(pointVec);
+            const interactionRadius = 3;
+            return distance < interactionRadius;
+          }
+          return false;
+        });
+        if (isInProximity) {
+          onInteract();
+        }
+      }
+    };
+
+    window.addEventListener('keypress', handleKeyPress);
+
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('keypress', handleKeyPress);
     };
-  }, []);
+  }, [interactivePoints, onInteract, meshRef]);
 
   useFrame(() => {
     const speed = 0.1;
@@ -55,6 +89,23 @@ const Character: React.FC = () => {
       // Clamp position within bounds
       position.x = Math.max(-bounds, Math.min(bounds, position.x));
       position.z = Math.max(-bounds, Math.min(bounds, position.z));
+
+      // Proximity detection
+      let newActivePoint: string | null = null;
+      interactivePoints.forEach((point) => {
+        const pointVec = new Vector3(point.position[0], point.position[1], point.position[2]);
+        const distance = position.distanceTo(pointVec);
+        const interactionRadius = 3;
+
+        if (distance < interactionRadius) {
+          newActivePoint = point.id;
+        }
+      });
+
+      if (newActivePoint !== prevActivePoint.current) {
+        onProximityChange(newActivePoint);
+        prevActivePoint.current = newActivePoint;
+      }
     }
   });
 
@@ -64,6 +115,6 @@ const Character: React.FC = () => {
       <meshStandardMaterial color="orange" />
     </mesh>
   );
-}
+};
 
 export default Character
