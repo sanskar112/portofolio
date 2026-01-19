@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Box } from '@react-three/drei'
 import Character from './Character'
