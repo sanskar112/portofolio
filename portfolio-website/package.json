@@ -1,5 +1,7 @@
 {
   "name": "portfolio-website",
+  "homepage": "https://sanskar112.github.io/portofolio",
+  "repository": "https://github.com/sanskar112/portofolio.git",
   "private": true,
   "version": "0.0.0",
   "type": "module",
