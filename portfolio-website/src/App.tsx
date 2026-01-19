@@ -6,11 +6,17 @@ import AboutMe from './components/AboutMe'
 import Projects from './components/Projects'
 import Contact from './components/Contact'
 
+interface InteractivePoint {
+  id: string;
+  position: [number, number, number];
+  color: string;
+}
+
 export function App() {
   const [activeInteractivePoint, setActiveInteractivePoint] = useState<string | null>(null);
   const [interactionActive, setInteractionActive] = useState<boolean>(false);
 
-  const interactivePoints = [
+  const interactivePoints: InteractivePoint[] = [
     { id: 'about', position: [-10, 0, -10], color: 'blue' },
     { id: 'projects', position: [0, 0, -10], color: 'green' },
     { id: 'contact', position: [10, 0, -10], color: 'red' },
