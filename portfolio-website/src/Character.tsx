@@ -70,7 +70,6 @@ const Character: React.FC<CharacterProps> = ({ interactivePoints, onProximityCha
     const speed = 0.1;
     if (meshRef.current) {
       const { position } = meshRef.current;
-      const halfSize = 0.25; // Half of the character's box geometry size (0.5 / 2)
       const bounds = 49.75; // Half of the plane size (100 / 2) - halfSize
 
       if (keysPressed['w'] || keysPressed['W']) {
