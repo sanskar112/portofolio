@@ -6,7 +6,7 @@ import AboutMe from './components/AboutMe'
 import Projects from './components/Projects'
 import Contact from './components/Contact'
 
-function App() {
+export function App() {
   const [activeInteractivePoint, setActiveInteractivePoint] = useState<string | null>(null);
   const [interactionActive, setInteractionActive] = useState<boolean>(false);
 
